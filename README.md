@@ -21,8 +21,11 @@ The application is built in **JavaScript** and uses **DOM** (Document Object Mod
 
 ## Pages
 
-![Showing all customers](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/all.png?raw=true)
+### Show all customers
+![Show all customers](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/all.png?raw=true)
 
+### Add customer
 ![Add customer](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/add.png?raw=true)
 
-![Showing single customer](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/single.png?raw=true)
+### Show single customer
+![Show single customer](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/single.png?raw=true)
