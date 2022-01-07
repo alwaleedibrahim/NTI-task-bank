@@ -18,3 +18,11 @@ Bank application (a dummy one I might add) that is built on client-side.
 The application is built in **JavaScript** and uses **DOM** (Document Object Model) and **BOM** (Browser Object Model). The application stores customers data in browser's local storage.
 
 **BootStrap** is used to add styles.
+
+## Pages
+
+![Showing all customers](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/all.png?raw=true)
+
+![Add customer](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/add.png?raw=true)
+
+![Showing single customer](https://github.com/alwaleedibrahim/NTI-task-bank/blob/master/images/single.png?raw=true)
