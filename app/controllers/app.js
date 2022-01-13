@@ -1,30 +1,25 @@
-const fs = require("fs");
+const { redirect } = require("express/lib/response");
+const {ObjectId} = require("mongodb")
+const dbConnection = require("../../models/db_connec");
 const ValiadtorController = require("./validator");
 
-const readFromJSON = () => {
-  let data;
-  try {
-    data = JSON.parse(fs.readFileSync("./models/data.json"));
-    if (!Array.isArray(data)) throw new Error();
-  } catch (e) {
-    data = [];
-  }
-  return data;
-};
-
-const writeDataToJSON = (data) => {
-  try {
-    fs.writeFileSync("./models/data.json", JSON.stringify(data));
-  } catch (e) {
-    console.log(e.message);
-  }
-};
-
 class User {
+  static searchUserByID = (id, data) => {
+    let userIndex = data.findIndex((el) => el.id == id);
+    return userIndex;
+  };
   static showAll = (req, res) => {
-    const data = readFromJSON();
-    const isEmpty = data.length == 0;
-    res.render("index", { pageTitle: "All Users", data, isEmpty });
+    dbConnection((err, client, db) => {
+      db.collection("data")
+        .find()
+        .toArray((error, result) => {
+          if (error) return redirect("/err");
+          const data = result;
+          const isEmpty = data.length == 0;
+          client.close();
+          res.render("index", { pageTitle: "All Users", data, isEmpty });
+        });
+    });
   };
 
   static addUser = (req, res) => {
@@ -42,41 +37,40 @@ class User {
     if (ValiadtorController.isEmptyString(req.body.name)) {
       res.render("add", { error: "Name cannot be empty" });
     }
-    const data = readFromJSON();
-    if (data.length == 0) user.id = 5000;
-    else user.id = data[data.length - 1].id + 1;
-    user.transactions = [];
-    data.push(user);
-    writeDataToJSON(data);
 
-    res.render("single", {
-      pageTitle: "User Details",
-      user: user,
-      isNotFound: false,
+    dbConnection((err, client, db) => {
+      db.collection("data").insertOne(user, (error, result) => {
+        if (err) return res.redirect("/err");
+        client.close();
+        res.render("single", {
+          pageTitle: "User Details",
+          user: user,
+          isNotFound: false,
+        });
+      });
     });
   };
-  static searchUserByID = (id, data) => {
-    let userIndex = data.findIndex((el) => el.id == id);
-    return userIndex;
-  };
+
   static singleUser = (req, res) => {
     let isNotFound = false;
     const id = req.params.id;
-    const data = readFromJSON();
-    const userIndex = this.searchUserByID(id, data);
-    if (userIndex == -1) isNotFound = true;
-    res.render("single", {
-      pageTitle: "User Details",
-      user: data[userIndex],
-      isNotFound,
+    dbConnection((err, client, db) => {
+      db.collection("data").find({ _id: ObjectId(id) }, (err, result) => {
+        if (err) {
+          res.redirect("/err");
+          client.close();
+        }
+        res.render("single", {
+          pageTitle: "User Details",
+          user: data[userIndex],
+          isNotFound,
+        });
+      });
     });
   };
-
   static editUserPost = (req, res) => {
     const heads = ["name", "address", "phoneNumber", "balance"];
     const id = req.params.id;
-    const data = readFromJSON();
-    const userIndex = this.searchUserByID(id, data);
     if (!ValiadtorController.isMobilePhone(req.body.phoneNumber)) {
       res.render("edit", {
         error: "Mobile number is not valid",
@@ -91,52 +85,55 @@ class User {
         user: data[userIndex],
       });
     }
-
-    heads.forEach((head) => {
-      data[userIndex][head] = req.body[head];
-    });
-    res.render("single", {
-      pageTitle: "User Details",
-      user: data[userIndex],
-      isNotFound: false,
+    dbConnection((err, client) => {
+      if (err) res.redirect("/err");
+      client
+        .collection("data")
+        .updateOne(
+          {
+            _id: new ObjectId(req.params.id),
+          },
+          {
+            $set: {
+              name: req.body.name,
+              age: req.body.age,
+              email: req.body.email,
+            },
+          }
+        )
+        .then((result) => {
+          client.close();
+          res.redirect("/");
+        })
+        .catch((error) => res.redirect("/err"));
     });
   };
 
   static editUser = (req, res) => {
-    let isNotFound = false;
-    const id = req.params.id;
-    const data = readFromJSON();
-    const userIndex = this.searchUserByID(id, data);
-    if (userIndex == -1) isNotFound = true;
     res.render("edit", {
       pageTitle: "Edit User Details",
-      user: data[userIndex],
-      isNotFound,
     });
   };
 
   static deleteUser = (req, res) => {
     const id = req.params.id;
-    const data = readFromJSON();
-    const userIndex = this.searchUserByID(id, data);
-    if (userIndex != -1) {
-      data.splice(userIndex, 1);
-      writeDataToJSON(data);
-      res.redirect("/");
-    } else res.redirect("/err");
+    dbConnection((e, client) => {
+      db.collection
+        .deleteOne({ _id: ObjectId(id) })
+        .then((result) => {
+          client.close();
+          res.redirect("/");
+        })
+        .catch((error) => res.redirect("/err"));
+    });
   };
 
   static transaction = (req, res) => {
     const id = req.params.id;
     let trans = req.body;
-    const data = readFromJSON();
-    const userIndex = this.searchUserByID(id, data);
     if (ValiadtorController.isNotNumber(trans.amount)) {
       res.render("single", {
         error: "Transaction amount Should Be a Number",
-        pageTitle: "User Details",
-        user: data[userIndex],
-        isNotFound: false,
       });
     }
 
@@ -148,15 +145,26 @@ class User {
       newTransaction.amount = -newTransaction.amount;
     let balance = Number(data[userIndex].balance);
     balance += newTransaction.amount;
-    data[userIndex].balance = balance;
-    data[userIndex].transactions.push(newTransaction);
 
-    writeDataToJSON(data);
-
-    res.render("single", {
-      pageTitle: "User Details",
-      user: data[userIndex],
-      isNotFound: false,
+    dbConnection((err, client) => {
+      if (err) res.redirect("/err");
+      client
+        .collection("data")
+        .updateOne(
+          {
+            _id: new ObjectId(id),
+          },
+          {
+            $set: {
+              transactions: newTransaction,
+            },
+          }
+        )
+        .then((result) => {
+          client.close();
+          res.redirect("/");
+        })
+        .catch((error) => res.redirect("/err"));
     });
   };
 }
