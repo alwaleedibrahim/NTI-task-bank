@@ -1,0 +1,78 @@
+{{>header}}
+<section class="container my-4">
+    <div class="mb-3">
+        <a href="/" class="btn btn-primary">Back to All Customers Page</a>
+    </div>
+    <h2>Customer Info</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Account Number</th>
+                <th>Customer Name</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody id="single">
+              {{#if isNotFound}}
+                <tr>
+                    <td class="bg-danger text-white ">No Users Yet</td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td>{{this.user.id}}</td>
+                    <td>{{this.user.name}}</td>
+                    <td>{{this.user.address}}</td>
+                    <td>{{this.user.phoneNumber}}</td>
+                    <td>{{this.user.balance}}</td>
+                </tr>
+
+                {{/if}}
+        </tbody>
+    </table>
+    <div class="mb-3">
+        <a href="/edit/{{this.user.id}}" class="btn btn-info" id="editBtn">Edit Customer</a>
+    </div>
+    <div class="mb-3">
+        <a href="/delete/{{this.user.id}}" class="btn btn-danger" id="deleteBtn">Delete Customer</a>
+    </div>
+    <h2>New Transaction</h2>
+    <form id="transaction" action="/transaction/{{this.user.id}}" method="POST">
+        <div class="btn-3">
+            <label>Transaction Type</label>
+            <select name="type" class="form-select">
+                <option value="add">Add</option>
+                <option value="withdraw">Withdraw</option>
+            </select>
+        </div>
+        <div class="btn-3">
+            <label>Transaction Amount</label>
+            <input name="amount" class="form-control">
+        </div>
+        <div class="btn-3">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+    <h2>Transaction History</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="transactionHistory">
+            {{#each this.user.transactions}}
+                <tr>
+                    <td>{{this.type}}</td>
+                    <td>{{this.amount}}</td>
+                    <td>{{this.time}}</td>
+                </tr>
+            {{/each}}
+
+        </tbody>
+    </table>
+</section>
+{{>footer}}

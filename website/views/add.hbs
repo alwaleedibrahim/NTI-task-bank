@@ -1,0 +1,29 @@
+{{>header}}
+<section class="container my-4">
+    <div class="mb-3">
+        <a href="/" class="btn btn-primary">Back to All Customers Page</a>
+    </div>
+    <h2>Add new Customer</h2>
+    <form id="addCustomer" method="POST">
+        <div class="btn-3">
+            <label>Name</label>
+            <input name="name" class="form-control">
+        </div>
+        <div class="btn-3">
+            <label>Address</label>
+            <input name="address" class="form-control">
+        </div>
+        <div class="btn-3">
+            <label>Phone Number</label>
+            <input name="phoneNumber" class="form-control">
+        </div>
+        <div class="btn-3">
+            <label>Initial Balance</label>
+            <input name="balance" class="form-control">
+        </div>
+        <div class="btn-3">
+            <button class="btn btn-primary">Add Customer</button>
+        </div>
+    </form>
+</section>
+{{>footer}}

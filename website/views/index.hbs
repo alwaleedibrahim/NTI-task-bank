@@ -1,0 +1,39 @@
+{{>header}}
+<body>
+    <section class="container my-4">
+        <h1>Welcome to our bank</h1>
+        <div class="mb-3">
+            <a href="/add" class="btn btn-primary">Add New Customer</a>
+        </div>
+        <h2>Our Customers</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>Customer Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="customers">
+                {{#if isEmpty}}
+                <tr>
+                    <td colspan="3" class="bg-danger text-white ">No Users Yet</td>
+                </tr>
+                {{else}}
+                {{#each data}}
+                <tr>
+                    <td>{{this.id}}</td>
+                    <td>{{this.name}}</td>
+                    <td>
+                        <a class="btn btn-primary" href="/single/{{this.id}}">Show</a>
+                    </td>
+                </tr>
+                {{/each}}
+
+                {{/if}}
+            </tbody>
+        </table>
+    </section>
+
+   
+{{>footer}}

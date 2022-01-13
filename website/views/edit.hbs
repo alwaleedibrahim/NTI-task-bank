@@ -1,0 +1,29 @@
+{{>header}}
+<section class="container my-4">
+    <div class="mb-3">
+        <a href="/" class="btn btn-primary">Back to All Customers Page</a>
+    </div>
+    <h2>Edit Customer</h2>
+    <form id="editCustomer" method="POST">
+        <div class="btn-3">
+            <label>Name</label>
+            <input name="name" class="form-control" value="{{this.user.name}}">
+        </div>
+        <div class="btn-3">
+            <label>Address</label>
+            <input name="address" class="form-control" value="{{this.user.address}}">
+        </div>
+        <div class="btn-3">
+            <label>Phone Number</label>
+            <input name="phoneNumber" class="form-control" value="{{this.user.phoneNumber}}">
+        </div>
+        <div class="btn-3">
+            <label>Balance</label>
+            <input name="balance" class="form-control" value="{{this.user.balance}}" disabled>
+        </div>
+        <div class="btn-3">
+            <button class="btn btn-primary">Edit Customer</button>
+        </div>
+    </form>
+</section>
+{{>footer}}

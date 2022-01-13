@@ -1,0 +1,27 @@
+{
+  "name": "nti-task-bank",
+  "version": "1.0.0",
+  "description": "This web app is part of **NTI MEAN Stack Developer** Training program",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alwaleedibrahim/NTI-task-bank.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alwaleedibrahim/NTI-task-bank/issues"
+  },
+  "homepage": "https://github.com/alwaleedibrahim/NTI-task-bank#readme",
+  "dependencies": {
+    "dotenv": "^11.0.0",
+    "express": "^4.17.2",
+    "hbs": "^4.2.0",
+    "prettier": "^2.5.1",
+    "validator": "^13.7.0"
+  }
+}
